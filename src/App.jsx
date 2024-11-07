@@ -3,12 +3,15 @@ import "./App.css";
 import { FaPlus, FaPencilAlt, FaTrash } from "react-icons/fa";
 
 function App() {
-	const [todos, setTodos] = useState([{ id: 1, todo: "Learn React" }]);
-	const [input, setInput] = useState("");
+	const [todos, setTodos] = useState([{ id: 1, todo: "Learn React" }]); // to updated todos
+	const [input, setInput] = useState(""); // to store the input value
 
+	// add todos function
 	const addTodo = async () => {
 		try {
+			// trim the white space and input is not empty
 			if (input.trim() !== "") {
+				// setting up array with old todos and Object to with new todo which has id as new data and todo property
 				setTodos([...todos, { id: new Date(), todo: input }]);
 				setInput("");
 			}
