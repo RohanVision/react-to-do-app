@@ -5,6 +5,7 @@ import { FaPlus, FaPencilAlt, FaTrash } from "react-icons/fa";
 function App() {
 	const [todos, setTodos] = useState([{ id: 1, todo: "Learn React" }]); // to updated todos
 	const [input, setInput] = useState(""); // to store the input value
+	const [editIndex, setEditIndex] = useState(-1);
 
 	// add todos function
 	const addTodo = async () => {
@@ -18,6 +19,30 @@ function App() {
 		} catch (error) {
 			console.error(error.message);
 		}
+	};
+
+	// Editi ToDo
+	const setEdit = (index) => {
+		setInput(todos[index].todo);
+		setEditIndex(index);
+	};
+
+	const updateTodos = async () => {
+		try {
+			const updateTodos = [...todos];
+			updateTodos[editIndex].todo = input;
+			setTodos(updateTodos);
+			setEditIndex(-1);
+			setInput("");
+		} catch (error) {
+			console.error(error.message);
+		}
+	};
+
+	// Remove Todo
+	const removeTodo = async (id) => {
+		let filterTodos = todos.filter((todo) => todo.id !== id);
+		setTodos(filterTodos);
 	};
 
 	return (
@@ -37,10 +62,10 @@ function App() {
 						}}
 					/>
 					<button
-						onClick={addTodo}
+						onClick={editIndex === -1 ? addTodo : updateTodos}
 						className="bg-gradient-to-r from-blue-400 to-blue-600 py-2 px-4 rounded"
 					>
-						<FaPlus />
+						{editIndex === -1 ? <FaPlus /> : <FaPencilAlt />}
 					</button>
 				</div>
 			</div>
@@ -55,10 +80,16 @@ function App() {
 							>
 								<span className="text-lg">{todo.todo}</span>
 								<div>
-									<button className="mr-2 p-2 bg-gradient-to-r from-gray-400 to-gray-600 text-white rounderd hover:from-gray-500 hover:to-gray-700">
+									<button
+										onClick={() => setEdit(index)}
+										className="mr-2 p-2 bg-gradient-to-r from-gray-400 to-gray-600 text-white rounderd hover:from-gray-500 hover:to-gray-700"
+									>
 										<FaPencilAlt />
 									</button>
-									<button className="mr-2 p-2 bg-gradient-to-r from-red-400 to-red-600 text-white rounderd hover:from-red-500 hover:to-red-700">
+									<button
+										onClick={() => removeTodo(todo.id)}
+										className="mr-2 p-2 bg-gradient-to-r from-red-400 to-red-600 text-white rounderd hover:from-red-500 hover:to-red-700"
+									>
 										<FaTrash />
 									</button>
 								</div>
