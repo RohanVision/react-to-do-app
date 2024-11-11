@@ -1,11 +1,33 @@
-import { useState } from "react";
-import "./App.css";
+import { useEffect, useState } from "react";
 import { FaPlus, FaPencilAlt, FaTrash } from "react-icons/fa";
+import {
+	addDoc,
+	collection,
+	deleteDoc,
+	doc,
+	onSnapshot,
+	updateDoc,
+} from "firebase/firestore";
+import { db } from "./firebase";
+import "./App.css";
 
 function App() {
-	const [todos, setTodos] = useState([{ id: 1, todo: "Learn React" }]); // to updated todos
+	const [todos, setTodos] = useState([]); // to updated todos
 	const [input, setInput] = useState(""); // to store the input value
 	const [editIndex, setEditIndex] = useState(-1);
+
+	useEffect(() => {
+		const unSubscribe = onSnapshot(collection(db, "todos"), (snapshot) => {
+			setTodos(
+				snapshot.docs.map((doc) => ({
+					id: doc.id,
+					todo: doc.data().todo,
+				}))
+			);
+		});
+
+		return () => unSubscribe();
+	}, []);
 
 	// add todos function
 	const addTodo = async () => {
@@ -13,7 +35,9 @@ function App() {
 			// trim the white space and input is not empty
 			if (input.trim() !== "") {
 				// setting up array with old todos and Object to with new todo which has id as new data and todo property
-				setTodos([...todos, { id: new Date(), todo: input }]);
+				// setTodos([...todos, { id: new Date(), todo: input }]);
+				// We are using method from firebase
+				await addDoc(collection(db, "todos"), { todo: input });
 				setInput("");
 			}
 		} catch (error) {
@@ -29,9 +53,13 @@ function App() {
 
 	const updateTodos = async () => {
 		try {
-			const updateTodos = [...todos];
-			updateTodos[editIndex].todo = input;
-			setTodos(updateTodos);
+			// we will using now firebase method
+			const todoDocRef = doc(db, "todos", todos[editIndex].id);
+			await updateDoc(todoDocRef, { todo: input });
+
+			// const updateTodos = [...todos];
+			// updateTodos[editIndex].todo = input;
+			// setTodos(updateTodos);
 			setEditIndex(-1);
 			setInput("");
 		} catch (error) {
@@ -41,8 +69,14 @@ function App() {
 
 	// Remove Todo
 	const removeTodo = async (id) => {
-		let filterTodos = todos.filter((todo) => todo.id !== id);
-		setTodos(filterTodos);
+		// let filterTodos = todos.filter((todo) => todo.id !== id);
+		// setTodos(filterTodos);
+		// Using method from database
+		try {
+			await deleteDoc(doc(db, "todos", id));
+		} catch (error) {
+			console.error(error.message);
+		}
 	};
 
 	return (
