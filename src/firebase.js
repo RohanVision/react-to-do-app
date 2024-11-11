@@ -1,10 +1,11 @@
+/* eslint-disable no-undef */
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-    apiKey: "AIzaSyC1dvuBKzmQ9rELpvZaQDgf3RnNZvl5FPM",
+    apiKey: process.env.API_KEY,
     authDomain: "todo-app-9e586.firebaseapp.com",
     projectId: "todo-app-9e586",
     storageBucket: "todo-app-9e586.firebasestorage.app",

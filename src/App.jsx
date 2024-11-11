@@ -10,7 +10,7 @@ import {
 } from "firebase/firestore";
 import { db } from "./firebase";
 import "./App.css";
-import TodoLists from "./components/todoLists";
+import TodoLists from "./components/TodoLists";
 
 function App() {
 	const [todos, setTodos] = useState([]); // to updated todos
